@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GenreLens | AI Movie Genre Predictor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ffb4ab",
+                    "inverse-on-surface": "#313030",
+                    "on-tertiary-fixed-variant": "#004e5e",
+                    "tertiary-fixed": "#b0ecff",
+                    "on-secondary": "#2f3131",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-surface": "#e5e2e1",
+                    "surface-container-high": "#2a2a2a",
+                    "on-primary-container": "#695200",
+                    "on-error": "#690005",
+                    "outline-variant": "#4e4633",
+                    "on-primary-fixed-variant": "#584400",
+                    "tertiary-container": "#49dbff",
+                    "inverse-primary": "#745b00",
+                    "on-tertiary": "#003641",
+                    "on-primary": "#3d2f00",
+                    "on-secondary-container": "#b4b5b5",
+                    "surface-tint": "#f0c110",
+                    "primary-container": "#f5c518",
+                    "on-primary-fixed": "#241a00",
+                    "secondary": "#c6c6c7",
+                    "background": "#131313",
+                    "outline": "#9a9078",
+                    "surface-container-low": "#1c1b1b",
+                    "on-error-container": "#ffdad6",
+                    "surface-container": "#201f1f",
+                    "error-container": "#93000a",
+                    "on-surface-variant": "#d1c5ac",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-tertiary-container": "#005e70",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-tertiary-fixed": "#001f27",
+                    "secondary-container": "#454747",
+                    "primary": "#ffe5a0",
+                    "surface-container-highest": "#353534",
+                    "primary-fixed-dim": "#f0c110",
+                    "surface": "#131313",
+                    "primary-fixed": "#ffe08b",
+                    "surface-dim": "#131313",
+                    "secondary-fixed": "#e2e2e2",
+                    "inverse-surface": "#e5e2e1",
+                    "surface-variant": "#353534",
+                    "on-background": "#e5e2e1",
+                    "tertiary": "#bdefff",
+                    "tertiary-fixed-dim": "#42d7fb",
+                    "surface-container-lowest": "#0e0e0e",
+                    "surface-bright": "#3a3939"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-desktop": "40px",
+                    "base": "8px",
+                    "margin-mobile": "16px",
+                    "container-max": "1200px",
+                    "section-gap": "80px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Montserrat"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Montserrat"],
+                    "label-sm": ["Inter"],
+                    "display-lg-mobile": ["Montserrat"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(26, 26, 26, 0.5);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .drag-zone-active {
+            border-color: #f5c518 !important;
+            background: rgba(245, 197, 24, 0.05) !important;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(245, 197, 24, 0.1), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite linear;
+        }
+        @keyframes shimmer {
+            from { background-position: -200% 0; }
+            to { background-position: 200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 h-20 bg-background/80 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-primary/5">
+  <div class="flex justify-between items-center px-gutter h-full max-w-container-max mx-auto">
+    <div class="flex items-center gap-8">
+      <h1 class="text-headline-md font-headline-md font-bold text-primary-container tracking-tight">GenreLens</h1>
+      <nav class="hidden md:flex items-center gap-6">
+        <a class="text-body-md font-body-md text-primary border-b-2 border-primary pb-1 cursor-pointer active:scale-95 transition-transform" href="#">Predictor</a>
+        <a class="text-body-md font-body-md text-secondary hover:text-on-surface transition-colors cursor-pointer active:scale-95 transition-transform" href="#">History</a>
+        <a class="text-body-md font-body-md text-secondary hover:text-on-surface transition-colors cursor-pointer active:scale-95 transition-transform" href="#">About</a>
+      </nav>
+    </div>
+    <div class="flex items-center gap-4">
+      <button class="material-symbols-outlined text-primary cursor-pointer active:scale-95 transition-transform" data-icon="account_circle">account_circle</button>
+    </div>
+  </div>
+</header>
+<main class="pt-32 pb-section-gap px-gutter max-w-container-max mx-auto min-h-screen">
+<!-- Hero Section -->
+<section class="text-center mb-section-gap">
+<h2 class="text-display-lg-mobile md:text-display-lg font-display-lg text-on-surface mb-4">Discover the soul of cinema</h2>
+<p class="text-body-lg font-body-lg text-secondary max-w-2xl mx-auto">AI-powered poster analysis. Upload a movie poster and let our neural networks decode the genre, mood, and visual storytelling.</p>
+</section>
+<!-- Main Workspace -->
+<div class="grid lg:grid-cols-2 gap-12 items-start">
+<!-- Left Side: Upload & Action -->
+<div class="space-y-8">
+<div class="relative glass-panel rounded-xl border-2 border-dashed border-white/20 p-12 flex flex-col items-center justify-center text-center transition-all duration-300 group cursor-pointer hover:border-primary-container/50" id="drop-zone">
+<input accept="image/*" class="hidden" id="file-input" type="file"/>
+<span class="material-symbols-outlined text-6xl text-primary-container mb-4 group-hover:scale-110 transition-transform" data-icon="movie">movie</span>
+<h3 class="text-headline-md font-headline-md mb-2">Drop your poster here</h3>
+<p class="text-body-md text-secondary mb-6">JPEG or PNG up to 10MB</p>
+<button class="px-6 py-3 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-semibold rounded-lg transition-all active:scale-95 border border-white/10" onclick="document.getElementById('file-input').click()">
+                        Click to upload
+                    </button>
+</div>
+<div class="flex flex-col gap-4">
+<button class="w-full py-4 bg-primary-container text-on-primary-fixed font-bold text-headline-md rounded-xl shadow-xl shadow-primary-container/10 transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed" disabled="" id="predict-btn">
+                        Predict Genre
+                    </button>
+<p class="text-label-sm text-secondary text-center">Processing takes ~3 seconds</p>
+</div>
+<p class="text-body-lg font-body-lg text-secondary max-w-2xl mx-auto">
+    Our neural network analyzes visual patterns in movie posters colors, composition, and mood to predict genres. Upload a poster and see what the AI sees.
+</p>
+</div>
+<!-- Right Side: Preview & Results -->
+<div class="space-y-8">
+<!-- Preview Frame -->
+<div class="relative glass-panel rounded-xl overflow-hidden aspect-[2/3] max-w-md mx-auto shadow-2xl group">
+<div class="absolute inset-0 flex flex-col items-center justify-center text-secondary p-8 text-center bg-surface-container-low" id="image-placeholder">
+<span class="material-symbols-outlined text-4xl mb-2 opacity-20" data-icon="image">image</span>
+<p class="font-label-sm uppercase tracking-widest opacity-40">Poster Preview</p>
+</div>
+<img class="hidden w-full h-full object-cover" data-alt="A dark cinematic movie theater background with golden ambient light reflecting off a blank vertical screen. The atmosphere is premium and sophisticated, featuring a minimalist aesthetic with charcoal textures and soft, deep shadows. Professional film studio lighting style." id="poster-preview" src=""/>
+<!-- Loading Overlay -->
+<div class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-10 flex flex-col items-center justify-center space-y-4" id="loading-overlay">
+<div class="w-12 h-12 border-4 border-primary-container/20 border-t-primary-container rounded-full animate-spin"></div>
+<p class="text-primary-container font-headline-md animate-pulse">Analyzing poster...</p>
+</div>
+</div>
+<!-- Results Area -->
+<div class="opacity-0 transition-opacity duration-500 space-y-6" id="results-area">
+<div class="flex flex-wrap gap-3 justify-center" id="genre-chips">
+
+<!-- Chips injected here -->
+</div>
+<div class="hidden bg-error/10 border border-error/20 p-4 rounded-lg text-error text-center font-body-md" id="error-box">
+                        Failed to analyze. Please try again with a clearer image.
+                    </div>
+
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-base px-gutter flex flex-col md:flex-row justify-between items-center gap-4 mt-section-gap bg-surface-container-lowest border-t border-white/5">
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-bold text-primary">GenreLens</span>
+<span class="text-label-sm font-label-sm text-on-secondary-fixed-variant">© 2024 GenreLens. Powered by AI.</span>
+</div>
+<div class="flex gap-6">
+<a class="text-label-sm font-label-sm text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-label-sm font-label-sm text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-label-sm font-label-sm text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">API Docs</a>
+</div>
+</footer>
+<script>
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const posterPreview = document.getElementById('poster-preview');
+    const imagePlaceholder = document.getElementById('image-placeholder');
+    const predictBtn = document.getElementById('predict-btn');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const resultsArea = document.getElementById('results-area');
+    const genreChips = document.getElementById('genre-chips');
+    const errorBox = document.getElementById('error-box');
+
+    let selectedFile = null;
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function getApiBase() {
+    if (window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1') {
+        return 'http://127.0.0.1:8000';
+    }
+    return 'https://your-render-url.onrender.com'; // update after Render deployment
+    }
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-zone-active'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-zone-active'), false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        handleFiles(dt.files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        handleFiles(e.target.files);
+    });
+
+    function handleFiles(files) {
+        if (files.length > 0) {
+            selectedFile = files[0];
+            const reader = new FileReader();
+            reader.readAsDataURL(selectedFile);
+            reader.onloadend = () => {
+                posterPreview.src = reader.result;
+                posterPreview.classList.remove('hidden');
+                imagePlaceholder.classList.add('hidden');
+                predictBtn.disabled = false;
+                resultsArea.classList.add('opacity-0');
+                errorBox.classList.add('hidden');
+            }
+        }
+    }
+
+    predictBtn.addEventListener('click', async () => {
+        if (!selectedFile) return;
+
+        loadingOverlay.classList.remove('hidden');
+        predictBtn.disabled = true;
+        resultsArea.classList.add('opacity-0');
+        errorBox.classList.add('hidden');
+        genreChips.innerHTML = '';
+
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+
+        try {
+            
+            const response = await fetch(`${getApiBase()}/api/predict/`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.predictions && data.predictions.length > 0) {
+                displayResults(data.predictions);
+            } else {
+                errorBox.classList.remove('hidden');
+                resultsArea.classList.remove('opacity-0');
+            }
+
+        } catch (err) {
+            console.error(err);
+            errorBox.classList.remove('hidden');
+            resultsArea.classList.remove('opacity-0');
+        } finally {
+            loadingOverlay.classList.add('hidden');
+            predictBtn.disabled = false;
+        }
+    });
+
+    function displayResults(predictions) {
+        resultsArea.classList.remove('opacity-0');
+        genreChips.innerHTML = '';
+
+        predictions.forEach((item, index) => {
+            const pill = document.createElement('div');
+            pill.className = `px-6 py-2 rounded-full font-semibold border transition-all duration-500 transform translate-y-4 opacity-0 flex items-center gap-2`;
+
+            pill.classList.add('bg-primary-container', 'text-on-primary-fixed', 'border-primary-container', 'shadow-lg', 'shadow-primary-container/20');
+
+            pill.innerHTML = `
+                <span>${item.genre}</span>
+                <span class="text-label-sm opacity-70">${item.confidence}%</span>
+            `;
+
+            genreChips.appendChild(pill);
+
+            setTimeout(() => {
+                pill.classList.remove('translate-y-4', 'opacity-0');
+            }, index * 100);
+        });
+    }
+</script>
+</body></html>
